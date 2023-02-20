@@ -1,0 +1,27 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ws="http://jax-ws.dev.java.net/spring/core"
+       xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://jax-ws.dev.java.net/spring/core
+       http://jax-ws.dev.java.net/spring/core.xsd
+       http://jax-ws.dev.java.net/spring/servlet
+       http://jax-ws.dev.java.net/spring/servlet.xsd"
+>
+	
+	<bean id="CalculatorService" class=com.soap.webservice.Service.CalculatorService">
+        <property name="add" value="com.soap.webservice.Service.CalculatorService.add" ref="CalculatorService"/>
+        <property name="subtract" value = "${com.soap.webservice.Service.CalculatorService.subtract}" ref="CalculatorService" />
+        <property name="multiply" value="${com.soap.webservice.Service.CalculatorService.multiply}" ref="CalculatorService"/>
+        <property name="divide" value="${com.soap.webservice.Service.CalculatorService.divide}" ref="CalculatorService"/>
+    </bean>
+    
+    <wss:binding url="/version/soap">
+        <wss:service>
+            <ws:service bean="#CalculatorService"/>
+        </wss:service>
+    </wss:binding>
+    
+</beans> -->

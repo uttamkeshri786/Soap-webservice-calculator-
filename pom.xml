@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+	     					 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<!--
+	<parent>
+        <groupId>com.soap.webservice</groupId>
+        <artifactId>JavaParent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    -->
+    
+	<groupId>com.soap.webservice</groupId>
+	<artifactId>Soap-webservice-calculator</artifactId>
+	<version>1.0.0</version>
+	<name>Soap-webservice-calculator</name>
+	
+	<packaging>war</packaging>
+	<description>This is project for soap producer webservice calculator method implementations. </description>
+
+	<!-- properties -->
+	<properties>
+		<jetty.plugin.version>9.2.11.v20150529</jetty.plugin.version>
+		<cxf-codegen-plugin>3.4.2</cxf-codegen-plugin>
+		<jaxws-maven-plugin>2.3</jaxws-maven-plugin>
+		<java.version>8</java.version>
+	    <sun.jaxws.version>2.2.8</sun.jaxws.version>
+	    <metro.jaxws.version>2.3</metro.jaxws.version>
+	    <jaxws.scope>compile</jaxws.scope> <!-- provided(weblogic) / compile(tomcat) -->
+	    <compileSource>1.7</compileSource>
+	    <maven.compiler.source>1.7</maven.compiler.source>
+	    <maven.compiler.target>1.7</maven.compiler.target>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<dependencies>
+	    <!-- jax-ws runtime from sun -->
+	    <dependency>
+	        <groupId>com.sun.xml.ws</groupId>
+	        <artifactId>jaxws-rt</artifactId>
+	        <version>${sun.jaxws.version}</version>
+	        <scope>${jaxws.scope}</scope>
+	    </dependency> 
+	    <!-- jax-ws runtime from glassfish Metro - project tango -->
+	    <dependency>
+	        <groupId>org.glassfish.metro</groupId>
+	        <artifactId>webservices-rt</artifactId>
+	        <version>${metro.jaxws.version}</version>
+	        <scope>${jaxws.scope}</scope>
+	    </dependency>    
+	    <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+		<dependency>
+		    <groupId>javax.inject</groupId>
+		    <artifactId>javax.inject</artifactId>
+		    <version>1</version>
+		</dependency>
+	    <!-- https://mvnrepository.com/artifact/org.apache.tomcat.maven/tomcat7-maven-plugin -->
+		<dependency>
+		    <groupId>org.apache.tomcat.maven</groupId>
+		    <artifactId>tomcat7-maven-plugin</artifactId>
+		    <version>2.2</version>
+		</dependency>
+    </dependencies>
+	
+<build>
+<!-- plugin 3-maven wsgen goal -->
+<pluginManagement>
+	<plugins>		
+		<plugin>
+		    <groupId>org.jvnet.jax-ws-commons</groupId>
+		    <artifactId>jaxws-maven-plugin</artifactId>
+		    <version>${jaxws-maven-plugin}</version>
+		    <executions>
+		        <execution>
+		            <id>basic</id>
+		            <phase>generate-sources</phase>
+		            <goals>
+		            	<!-- Reads a JAX-WS service endpoint implementation class and generates all of the portable artifacts for a JAX-WS web service. -->
+		                <goal>wsgen</goal>
+		            </goals>
+    			    <configuration>
+			        <keep>true</keep>
+			        <sei>com.jaxws.series.bottom.up.approach.service.CalculatorService</sei>
+			        <genWsdl>true</genWsdl>
+			        <resourceDestDir>${basedir}\generated\resources\wsdl</resourceDestDir>
+			        <sourceDestDir>${basedir}\generated\java\source</sourceDestDir>
+			        <verbose>true</verbose>
+			        <target>2.1</target>
+                  	<vmArgs>
+			            <vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
+			            <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+		            </vmArgs>
+			    </configuration>
+		        </execution>
+		    </executions>
+		</plugin>
+		  <!-- CXF includes a Maven plugin which can generate java artifacts from WSDL. -->
+	      <!--
+	      <plugin>
+	        <groupId>org.apache.cxf</groupId>
+	        <artifactId>cxf-codegen-plugin</artifactId>
+	        <version>${cxf-codegen-plugin}</version>
+	        <executions>
+	          <execution>
+	            <id>generate-sources</id>
+	            <phase>generate-sources</phase>
+	            <configuration>
+	              <wsdlOptions>
+	                <wsdlOption>
+	                  <wsdl>${basedir}/src/main/resources/wsdl/CalculatorService.wsdl</wsdl>
+	                </wsdlOption>
+	              </wsdlOptions>
+	            </configuration>
+	            <goals>
+	              <goal>wsdl2java</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+	      </plugin>
+	      -->
+	    <!-- The Jetty plugin allows us to easily test the development build by running jetty:run on the command line. -->
+        <plugin>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <version>${jetty.plugin.version}</version>
+            <configuration>
+        		 <war>${basedir}/target/Soap-webservice-calculator-1.0.0.war</war>
+                 <scanIntervalSeconds>2</scanIntervalSeconds>
+                 <httpConnector>
+                 <host>localhost</host>
+                 <port>8086</port>
+                 </httpConnector>
+            </configuration>
+        </plugin>	
+		<!-- Apache Tomcat Server Plugin -->
+    	<plugin>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <version>2.2</version>
+            <configuration>
+            	<host>localhost</host>
+                <port>8086</port>
+                <!--<path>/</path>-->
+            </configuration>
+        </plugin>
+	</plugins>
+</pluginManagement>
+</build>
+</project>
